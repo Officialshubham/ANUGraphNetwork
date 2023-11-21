@@ -175,6 +175,7 @@ function renderGraph(graph, flag) {
         .enter().append("g");
 
     if (flag == true) {
+      
         var circles = node.append("circle")
             .attr("r", 10)
             .attr("fill", function (d) { return color(d.school); })
@@ -297,28 +298,39 @@ function searchNodes() {
     if(searchValue==""){
         window.alert("Enter valid value in search box!");
     }
+
     else{
 
         var values = searchValue.split(" ");
-    let text = ""
-    for (let i = 0; i < values.length; i++) {
-        if (i == values.length - 1) {
-            text += values[i];
-        }
-        else {
-            text += values[i] + ", ";
-        }
+        let text = ""
+        for (let i = 0; i < values.length; i++) {
+            if (i == values.length - 1) {
+                text += values[i];
+            }
+            else {
+                text += values[i] + ", ";
+            }
 
-    }
+        }
 
     // Filter nodes based on the search value
     var filteredNodes = originalGraph.nodes.filter(function (node) {
         return node.name.toLowerCase().includes(text);
     });
 
+    var filterNodesSchool = originalGraph.nodes.filter(function (node) {
+        return node.school.toLowerCase().includes(searchValue);
+    });
 
-    if (filteredNodes.length == 0) {
+    console.log(filteredNodes);
+    console.log(filterNodesSchool);
+
+
+    if (filteredNodes.length == 0 && filterNodesSchool.length == 0) {
         window.alert("No such name can be found!!");
+    }
+    else if(filteredNodes.length == 0){
+        filteredNodes = filterNodesSchool;
     }
 
     // Filter links based on the filtered nodes
