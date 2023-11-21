@@ -18,6 +18,11 @@ body.dark-mode {
     box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
 }
 
+#buttons button a{
+    text-decoration: none;
+    color: #000;
+}
+
 #my_dataviz input {
     margin-bottom: 10px;
     font-size: large;
@@ -44,7 +49,7 @@ text {
     font-size: 12px;
 }
 
-#school-legend {
+#school-legend, #rules-legend {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -56,6 +61,10 @@ text {
     width: 650px;
     overflow: auto; /* Enable scrolling */
     display: none; /* Initially hide the legend */
+}
+
+#rules-legend{
+    width: 800px;
 }
 
 
@@ -72,5 +81,6 @@ text {
     margin-right: 5px;
     border-radius: 50%;
 }
+
 
 
