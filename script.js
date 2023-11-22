@@ -118,6 +118,9 @@ function setupSimulation() {
         .force("center", d3.forceCenter(width / 2, height / 2));
 }
 
+// Calculate the count for each node based on the links
+const nodeCounts = {};
+
 
 function renderGraph(graph, flag) {
 
@@ -128,11 +131,16 @@ function renderGraph(graph, flag) {
     //Setup simulation
     setupSimulation();
 
-    // Calculate the count for each node based on the links
-    var nodeCounts = {};
     graph.links.forEach(function (link) {
         nodeCounts[link.source] = (nodeCounts[link.source] || 0) + 1;
     });
+    
+
+    // // Calculate the count for each node based on the links
+    // var nodeCounts = {};
+    // graph.links.forEach(function (link) {
+    //     nodeCounts[link.source] = (nodeCounts[link.source] || 0) + 1;
+    // });
 
 
     // function wrap(text, width) {
@@ -165,8 +173,9 @@ function renderGraph(graph, flag) {
         .attr("class", "links")
         .selectAll("line")
         .data(graph.links)
-        .enter().append("line")
-        .attr("stroke-width", function (d) { return Math.sqrt(d.value); });
+        .enter().append("line");
+        // // .attr("stroke-width", function (d) { return Math.sqrt(d.value); })
+      
 
     var node = svg.append("g")
         .attr("class", "nodes")
@@ -177,7 +186,7 @@ function renderGraph(graph, flag) {
     if (flag == true) {
       
         var circles = node.append("circle")
-            .attr("r", 10)
+            .attr("r", function (d) { return Math.sqrt(nodeCounts[d.id]) * 3})
             .attr("fill", function (d) { return color(d.school); })
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -222,9 +231,9 @@ function renderGraph(graph, flag) {
     // node.append("title")
     //     .text(function (d) { return d.name; });
 
-
+   
     node.append("title")
-        .text(function (d) { return d.name + " (" + d.school + ") "; });
+        .text(function (d) { return d.name + " (" + d.school + ") "+ "Total Collaboration: "+nodeCounts[d.id]; });
 
 
     simulation
@@ -290,6 +299,8 @@ function dragended(d) {
     d.fy = null;
 }
 
+
+
 function searchNodes() {
     // if(document.getElementById("search").value==null)
 
@@ -318,12 +329,11 @@ function searchNodes() {
         return node.name.toLowerCase().includes(text);
     });
 
+
+
     var filterNodesSchool = originalGraph.nodes.filter(function (node) {
         return node.school.toLowerCase().includes(searchValue);
     });
-
-    console.log(filteredNodes);
-    console.log(filterNodesSchool);
 
 
     if (filteredNodes.length == 0 && filterNodesSchool.length == 0) {
@@ -347,12 +357,17 @@ function searchNodes() {
         return acc;
     }, new Set());
 
+
     // Merge the connected nodes with the filtered nodes
     var allFilteredNodes = filteredNodes.concat(Array.from(connectedNodes).map(function (id) {
         return originalGraph.nodes.find(function (node) {
             return node.id === id;
         });
     }));
+
+    // document.getElementById("contribution").style.display = "flex";
+    // document.getElementById("myContri").innerHTML = allFilteredNodes.length-2;
+    
 
     // Create a new graph with filtered nodes and links
     var filteredGraph = {
@@ -361,7 +376,14 @@ function searchNodes() {
     };
 
     // Render the graph with the filtered data
+
+   
     searchRenderGraph(filteredGraph, true);
+   
+        
+    
+
+    
 
     // // Update the simulation with the filtered nodes
     // simulation.nodes(allFilteredNodes);
